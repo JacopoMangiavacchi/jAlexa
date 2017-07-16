@@ -9,9 +9,10 @@
 import UIKit
 import WatchConnectivity
 import AVFoundation
+import MessageUI
 
 
-class ViewController: UIViewController, WCSessionDelegate {
+class ViewController: UIViewController, WCSessionDelegate, MFMailComposeViewControllerDelegate {
     var player: AVAudioPlayer?
 
     private let session : WCSession? = WCSession.isSupported() ? WCSession.default : nil
@@ -36,6 +37,7 @@ class ViewController: UIViewController, WCSessionDelegate {
     func session(_ session: WCSession, didReceive file: WCSessionFile) {
 
         print("File received : \(file.fileURL)")
+        sendEmail(file: file.fileURL)
         
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
@@ -61,6 +63,29 @@ class ViewController: UIViewController, WCSessionDelegate {
     
     func sessionDidDeactivate(_ session: WCSession) {
         
+    }
+    
+    func sendEmail(file: URL) {
+        if( MFMailComposeViewController.canSendMail() ) {
+            
+            let mailComposer = MFMailComposeViewController()
+            mailComposer.mailComposeDelegate = self
+            
+            mailComposer.setSubject("watchOS captured audio")
+            mailComposer.setMessageBody("This is what they sound like.", isHTML: false)
+            
+            do {
+                let fileData = try Data(contentsOf: file)
+                mailComposer.addAttachmentData(fileData, mimeType: "audio/wav", fileName: "swifts")
+                self.present(mailComposer, animated: true, completion: nil)
+            } catch let error {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        self.dismiss(animated: true, completion: nil)
     }
 }
 

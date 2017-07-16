@@ -77,9 +77,10 @@ class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate, WCSes
     func startRecording() {
         let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.m4a")
         
+        //watchOS Audio-only asset Bit rate: 32 kbps stereo
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 12000,
+            AVSampleRateKey: 32000,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]

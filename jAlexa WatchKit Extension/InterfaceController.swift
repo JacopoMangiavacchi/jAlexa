@@ -9,14 +9,26 @@
 import WatchKit
 import Foundation
 import AVFoundation
+import WatchConnectivity
 
 
-class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate {
+class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate, WCSessionDelegate {
 
     var recordingSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
     
+    var player: AVAudioPlayer?
+    
     @IBOutlet var recButton: WKInterfaceButton!
+    
+    private let session : WCSession? = WCSession.isSupported() ? WCSession.default : nil
+    
+    override init() {
+        super.init()
+        
+        session?.delegate = self
+        session?.activate()
+    }
     
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
@@ -106,5 +118,27 @@ class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate {
         if !flag {
             finishRecording(success: false)
         }
+    }
+    
+    @IBAction func tapPlay() {
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.m4a")
+        
+        self.session?.transferFile(audioFilename, metadata: nil)
+        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setActive(true)
+            
+            player = try AVAudioPlayer(contentsOf: audioFilename)
+            guard let player = player else { return }
+            
+            player.play()
+        } catch let error {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        print("error: ", error)
     }
 }

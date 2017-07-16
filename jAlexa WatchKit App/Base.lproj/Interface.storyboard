@@ -14,12 +14,25 @@
             <objects>
                 <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="jAlexa_WatchKit_App" customModuleProvider="target">
                     <items>
-                        <button width="1" alignment="left" title="Tap to Speech" backgroundImage="circleButton" id="LHn-Jl-2m8">
-                            <fontDescription key="font" type="boldSystem" pointSize="19"/>
-                            <connections>
-                                <action selector="tapRecButton" destination="AgC-eL-Hgc" id="2xU-2W-K2S"/>
-                            </connections>
-                        </button>
+                        <group width="1" alignment="left" layout="vertical" id="a8e-IR-ZK8">
+                            <items>
+                                <group width="0.80000000000000004" height="1" alignment="center" id="v6K-Yv-wEl">
+                                    <items>
+                                        <button width="1" alignment="left" title="Tap to Speech" backgroundImage="circleButton" id="LHn-Jl-2m8">
+                                            <fontDescription key="font" type="boldSystem" pointSize="19"/>
+                                            <connections>
+                                                <action selector="tapRecButton" destination="AgC-eL-Hgc" id="2xU-2W-K2S"/>
+                                            </connections>
+                                        </button>
+                                    </items>
+                                </group>
+                                <button width="1" alignment="left" title="Play" id="5aa-ym-3BQ">
+                                    <connections>
+                                        <action selector="tapPlay" destination="AgC-eL-Hgc" id="r5q-29-UOi"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
                     </items>
                     <connections>
                         <outlet property="recButton" destination="LHn-Jl-2m8" id="k8E-u5-z4c"/>

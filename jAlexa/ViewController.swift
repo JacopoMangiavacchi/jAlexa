@@ -8,20 +8,11 @@
 
 import UIKit
 import WatchConnectivity
+import AVFoundation
+
 
 class ViewController: UIViewController, WCSessionDelegate {
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        
-    }
-    
-    func sessionDidBecomeInactive(_ session: WCSession) {
-        
-    }
-    
-    func sessionDidDeactivate(_ session: WCSession) {
-        
-    }
-    
+    var player: AVAudioPlayer?
 
     private let session : WCSession? = WCSession.isSupported() ? WCSession.default : nil
     
@@ -45,6 +36,31 @@ class ViewController: UIViewController, WCSessionDelegate {
     func session(_ session: WCSession, didReceive file: WCSessionFile) {
 
         print("File received : \(file.fileURL)")
+        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setActive(true)
+            
+            player = try AVAudioPlayer(contentsOf: file.fileURL)
+            guard let player = player else { return }
+            
+            player.play()
+        } catch let error {
+            print(error.localizedDescription)
+        }
+
+    }
+    
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        
+    }
+    
+    func sessionDidBecomeInactive(_ session: WCSession) {
+        
+    }
+    
+    func sessionDidDeactivate(_ session: WCSession) {
+        
     }
 }
 

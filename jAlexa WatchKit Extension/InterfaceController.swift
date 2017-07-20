@@ -12,7 +12,7 @@ import AVFoundation
 import WatchConnectivity
 
 
-class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate, WCSessionDelegate {
+class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate {  //, WCSessionDelegate {
 
     var recordingSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
@@ -21,14 +21,14 @@ class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate, WCSes
     
     @IBOutlet var recButton: WKInterfaceButton!
     
-    private let session : WCSession? = WCSession.isSupported() ? WCSession.default : nil
-    
-    override init() {
-        super.init()
-        
-        session?.delegate = self
-        session?.activate()
-    }
+//    private let session : WCSession? = WCSession.isSupported() ? WCSession.default : nil
+//
+//    override init() {
+//        super.init()
+//
+//        session?.delegate = self
+//        session?.activate()
+//    }
     
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
@@ -61,6 +61,20 @@ class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate, WCSes
     }
 
     @IBAction func tapRecButton() {
+//        let duration = TimeInterval(10)
+//        let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.m4a")
+//        
+//        let recordOptions =
+//            [WKAudioRecorderControllerOptionsMaximumDurationKey : duration,
+//             WKAudioRecorderControllerOptionsActionTitleKey: "Store"] as [String : Any]
+//        
+//        presentAudioRecorderController(withOutputURL: audioFilename,
+//                                                    preset: .narrowBandSpeech,
+//                                                    options: recordOptions as [NSObject : AnyObject],
+//                                                    completion: { saved, error in
+//                                                        
+//                })
+
         recButton.setTitle("Listening ...")
         
         if audioRecorder == nil {
@@ -68,38 +82,38 @@ class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate, WCSes
         } else {
             finishRecording(success: true)
         }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.recButton.setTitle("Tap to Stop")
-        }
+
+////        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+////            self.recButton.setTitle("Tap to Stop")
+////        }
     }
     
     func startRecording() {
         let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.m4a")
         
         //watchOS Audio-only asset Bit rate: 32 kbps stereo
-//        let settings = [
-//            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-//            AVSampleRateKey: 32000,
-//            AVNumberOfChannelsKey: 1,
-//            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
-//        ]
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
         
-        let settings =
-            [AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue,
-             AVEncoderBitRateKey: 16,
-             AVNumberOfChannelsKey: 1,
-             AVSampleRateKey: 32000.0] as [String : Any]  // 16000.0
+//        let settings =
+//            [AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue,
+//             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+//             AVEncoderBitRateKey: 16,
+//             AVNumberOfChannelsKey: 1,
+//             AVSampleRateKey: 44100.0] as [String : Any]
 
-        
-        
+
         do {
+            try FileManager.default.removeItem(at: audioFilename)
             audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
             audioRecorder.delegate = self
             audioRecorder.record()
             
             recButton.setTitle("Tap to Stop")
-        } catch {
+        } catch let error {
+            print("jAlexa ERROR: \(error.localizedDescription) - \(error)")
             finishRecording(success: false)
         }
     }
@@ -119,7 +133,6 @@ class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate, WCSes
             recButton.setTitle("Tap to Re-record")
         } else {
             recButton.setTitle("Tap to Record")
-            // recording failed :(
         }
     }
     
@@ -132,7 +145,7 @@ class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate, WCSes
     @IBAction func tapPlay() {
         let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.m4a")
         
-        self.session?.transferFile(audioFilename, metadata: nil)
+//        self.session?.transferFile(audioFilename, metadata: nil)
         
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
@@ -147,7 +160,7 @@ class InterfaceController: WKInterfaceController, AVAudioRecorderDelegate, WCSes
         }
     }
     
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        print("error: ", error)
-    }
+//    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+//        print("error: ", error)
+//    }
 }

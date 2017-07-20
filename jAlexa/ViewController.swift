@@ -37,7 +37,7 @@ class ViewController: UIViewController, WCSessionDelegate, MFMailComposeViewCont
     func session(_ session: WCSession, didReceive file: WCSessionFile) {
 
         print("File received : \(file.fileURL)")
-        sendEmail(file: file.fileURL)
+        //sendEmail(file: file.fileURL)
         
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
@@ -76,7 +76,7 @@ class ViewController: UIViewController, WCSessionDelegate, MFMailComposeViewCont
             
             do {
                 let fileData = try Data(contentsOf: file)
-                mailComposer.addAttachmentData(fileData, mimeType: "audio/wav", fileName: "swifts")
+                mailComposer.addAttachmentData(fileData, mimeType: "audio/aac", fileName: "audio")
                 self.present(mailComposer, animated: true, completion: nil)
             } catch let error {
                 print(error.localizedDescription)
